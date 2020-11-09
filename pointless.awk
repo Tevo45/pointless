@@ -4,6 +4,12 @@ BEGIN {
 	inexec = 0
 }
 
+#
+# FIXME
+# allow for "inline" exec, like this
+# <exec>echo yes</exec>
+#
+
 /<exec.*>/ {
 	execline = NR
 	inexec = 1
