@@ -39,3 +39,9 @@ for(ptless in `{walk $outdir | grep '\.ptless$'}) @{
 	pointless/pointless.awk $ptless >`{echo $ptless | sed 's@\.ptless$@.html@'}
 	rm $ptless
 }
+
+for(epilogue in `{walk $outdir | grep 'epilogue\.rc$'}) @{
+	cd `{basename -d $epilogue}
+	. epilogue.rc
+	rm epilogue.rc
+}
