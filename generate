@@ -22,6 +22,11 @@ if(! ~ $#* 1)
 mkdir -p $outdir
 dircp $1 $outdir
 
+@ {
+	cd $outdir
+	pointlessroot=`{pwd}
+}
+
 for(index in `{walk $outdir | grep 'index\.rc$'}) @{
 	cd `{basename -d $index}
 	. index.rc
@@ -31,6 +36,6 @@ for(index in `{walk $outdir | grep 'index\.rc$'}) @{
 for(ptless in `{walk $outdir | grep '\.ptless$'}) @{
 	cd `{basename -d $ptless}
 	ptless=`{basename $ptless}
-	pointless.awk $ptless >`{echo $ptless | sed 's@\.ptless$@.html@'}
+	pointless/pointless.awk $ptless >`{echo $ptless | sed 's@\.ptless$@.html@'}
 	rm $ptless
 }
