@@ -1,0 +1,36 @@
+#!/bin/rc -e
+
+rfork en
+
+fn usage {
+	aux/usage
+	exit usage
+}
+
+args='dir'
+flagfmt='o:outdir outdir'
+
+if(! eval `{aux/getflags $*})
+	usage
+
+if(~ $#outdir 0)
+	outdir=`{pwd}^/out
+
+if(! ~ $#* 1)
+	usage
+
+mkdir -p $outdir
+dircp $1 $outdir
+
+for(index in `{walk $outdir | grep 'index\.rc$'}) @{
+	cd `{basename -d $index}
+	. index.rc
+	rm index.rc
+}
+
+for(ptless in `{walk $outdir | grep '\.ptless$'}) @{
+	cd `{basename -d $ptless}
+	ptless=`{basename $ptless}
+	pointless.awk $ptless >`{echo $ptless | sed 's@\.ptless$@.html@'}
+	rm $ptless
+}
