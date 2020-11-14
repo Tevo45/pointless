@@ -7,8 +7,13 @@ fn usage {
 	exit usage
 }
 
+fn verbose {
+	if(! ~ $#flagv 0)
+		echo $*
+}
+
 args='dir'
-flagfmt='o:outdir outdir'
+flagfmt='v, o:outdir outdir'
 
 if(! eval `{aux/getflags $*})
 	usage
@@ -27,21 +32,33 @@ dircp $1 $outdir
 	pointlessroot=`{pwd}
 }
 
+verbose '*** executing pre-generation hooks ***'
+
 for(index in `{walk $outdir | grep 'index\.rc$'}) @{
+	verbose --- $index ---
 	cd `{basename -d $index}
 	. index.rc
 	rm index.rc
 }
 
+verbose '*** preprocessing templates ***'
+
 for(ptless in `{walk $outdir | grep '\.ptless$'}) @{
+	verbose --- $ptless ---
 	cd `{basename -d $ptless}
 	ptless=`{basename $ptless}
 	pointless/pointless.awk $ptless >`{echo $ptless | sed 's@\.ptless$@.html@'}
 	rm $ptless
 }
 
+verbose '*** executing post-generation hooks ***'
+
 for(epilogue in `{walk $outdir | grep 'epilogue\.rc$'}) @{
+	verbose --- $epilogue ---
 	cd `{basename -d $epilogue}
 	. epilogue.rc
 	rm epilogue.rc
 }
+
+verbose '*** finished ***'
+
